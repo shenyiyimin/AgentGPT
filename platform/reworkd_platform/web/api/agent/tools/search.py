@@ -9,7 +9,6 @@ from reworkd_platform.web.api.agent.tools.stream_mock import stream_string
 from reworkd_platform.web.api.agent.tools.tool import Tool
 from reworkd_platform.web.api.agent.tools.utils import summarize
 
-
 # Search google via serper.dev. Adapted from LangChain
 # https://github.com/hwchase17/langchain/blob/master/langchain/utilities
 
@@ -42,12 +41,9 @@ class Search(Tool):
     )
     public_description = "Search google for information about current events."
 
-    def __init__(self, model_settings: ModelSettings):
-        super().__init__(model_settings)
-
     @staticmethod
     def available() -> bool:
-        return settings.serp_api_key is not None
+        return settings.serp_api_key is not None and settings.serp_api_key != ""
 
     async def call(
         self, goal: str, task: str, input_str: str
