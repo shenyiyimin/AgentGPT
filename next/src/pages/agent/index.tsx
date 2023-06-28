@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { api } from "../../utils/api";
 import ChatWindow from "../../components/console/ChatWindow";
-import type { Message } from "../../types/agentTypes";
+import type { Message } from "../../types/message";
 import Toast from "../../components/toast";
 import { FaBackspace, FaShare, FaTrash } from "react-icons/fa";
 import { env } from "../../env/client.mjs";
@@ -14,13 +14,11 @@ import { languages } from "../../utils/languages";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import nextI18NextConfig from "../../../next-i18next.config";
 import SidebarLayout from "../../layout/sidebar";
-import { useSettings } from "../../hooks/useSettings";
 
 const AgentPage: NextPage = () => {
   const [t] = useTranslation();
   const [showCopied, setShowCopied] = useState(false);
   const router = useRouter();
-  const settingsModel = useSettings();
 
   const agentId = typeof router.query.id === "string" ? router.query.id : "";
 
@@ -41,15 +39,12 @@ const AgentPage: NextPage = () => {
   };
 
   return (
-    <SidebarLayout settings={settingsModel}>
-      <div id="content" className="flex flex-col min-h-screen w-full items-center justify-center gap-4">
-        <ChatWindow
-          messages={messages.filter((m) => m.type !== "thinking")}
-          title={getAgent?.data?.name}
-          className="flex flex-1 my-5 w-[90%]"
-          fullscreen
-          visibleOnMobile
-        />
+    <SidebarLayout>
+      <div
+        id="content"
+        className="flex h-screen max-w-full flex-col items-center justify-center gap-3 px-3 pt-7 md:px-10"
+      >
+        <ChatWindow messages={messages} title={getAgent?.data?.name} visibleOnMobile />
         <div className="flex flex-row gap-2">
           <Button icon={<FaBackspace />} onClick={() => void router.push("/")}>
             Back
@@ -67,7 +62,9 @@ const AgentPage: NextPage = () => {
           <Button
             icon={<FaShare />}
             onClick={() => {
-              void window.navigator.clipboard.writeText(shareLink()).then(() => setShowCopied(true));
+              void window.navigator.clipboard
+                .writeText(shareLink())
+                .then(() => setShowCopied(true));
             }}
             enabledClassName={"bg-green-600 hover:bg-green-400"}
           >
@@ -86,7 +83,7 @@ const AgentPage: NextPage = () => {
 
 export default AgentPage;
 
-export const getStaticProps: GetStaticProps = async({ locale = "en" }) => {
+export const getStaticProps: GetStaticProps = async ({ locale = "en" }) => {
   const supportedLocales = languages.map((language) => language.code);
   const chosenLocale = supportedLocales.includes(locale) ? locale : "en";
 

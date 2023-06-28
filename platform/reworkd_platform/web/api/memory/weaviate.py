@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional, Tuple, cast
 
 import numpy as np
-import weaviate  # type: ignore
+import weaviate
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Weaviate
 from loguru import logger
@@ -81,7 +81,7 @@ class WeaviateMemory(AgentMemory):
             raise Exception("WeaviateMemory not initialized")
         return self.db.add_texts(tasks)
 
-    def get_similar_tasks(self, query: str, score_threshold: float) -> List[str]:
+    def get_similar_tasks(self, query: str, score_threshold: float = 0.98) -> List[str]:
         # Get similar tasks
         results = self._similarity_search_with_score(query)
 
